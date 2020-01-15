@@ -7,6 +7,13 @@ server.get('/', (req, res) => {
 });
 
 //custom middleware
+///////////////////////////////////////////////////////
+server.use(validateUser);
+server.use(validateUserId);
+server.use(validatePost);
+server.use(validatePostId);
+
+////////////////////////////////////////////////////
 
 function logger(req, res, next) {}
 

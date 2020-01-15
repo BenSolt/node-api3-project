@@ -7,9 +7,9 @@ const router = express.Router();
 const UserInfo = require('./users/userDb');
 
 
-//POST(ADD) USER
-////////////////////////////////////////////////
-router.post('/', (req, res) => {
+//POST(ADD) USER - validateUser
+////////////////////////////////////////////////////////////////
+router.post('/', validateUser('name'), (req, res) => {
   // do your magic!
   UserInfo.insert(req.body)
     .then(post => {
@@ -23,9 +23,14 @@ router.post('/', (req, res) => {
     });
 });
 
-//POST(ADD) USER POST
-////////////////////////////////////////////////
-router.post('/:id/posts', (req, res) => {
+
+//POST(ADD) USER POST -validateUserId
+/////////////////////////////////////////////////////////////////////////
+router.post('/:id/posts', validateUserId(id), (req, res) => {
+  if (!req.params.id){
+    res.status(400).json({
+    message: "The Users post with the specified ID does not exist."})
+  }
   // do your magic!
   UserInfo.insert(req.body)
   .then(user => {
@@ -40,7 +45,7 @@ router.post('/:id/posts', (req, res) => {
 });
 
 //GET USERS
-/////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 router.get('/', (req, res) => {
   // do your magic!
   UserInfo.get(req.query)
@@ -72,9 +77,9 @@ router.get('/:id', (req, res) => {
   });
 });
 
-//GET USERS ID by POSTS
+//GET USERS ID by POSTS - validatePost
 /////////////////////////////////////////////////////////////////////
-router.get('/:id/posts', (req, res) => {
+router.get('/:id/posts', validatePost, (req, res) => {
   // do your magic!
   const id = req.params.id
   UserInfo.getById(id)
@@ -133,18 +138,49 @@ router.put('/:id', (req, res) => {
   });
 });
 
-//custom middleware
+
+////////////////////CUSTOM MIDDLEWARE////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
 function validateUserId(req, res, next) {
   // do your magic!
+  return function(req, res, next) {
+
+    if (req.body[req.params.id]) {
+      next();
+    } else {
+      res.status(400).json({ errorMessage: `required ${req.params.id}` });
+    }
+  };
+  // if (!req.params.id){
+  //   res.status(400).json({
+  //   message: "The post with the specified ID does not exist."})
+  // }
 }
+////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 function validateUser(req, res, next) {
   // do your magic!
+  return function(req, res, next) {
+    if (req.body[prop]) {
+      next();
+    } else {
+      res.status(400).json({ errorMessage: `required ${prop}` });
+    }
+  };
+
 }
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
 function validatePost(req, res, next) {
   // do your magic!
+  if (!req.params.id){
+    res.status(400).json({
+    message: "The Users post with the specified ID does not exist."})
+  }
 }
 
 module.exports = router;

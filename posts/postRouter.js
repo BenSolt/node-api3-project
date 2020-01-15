@@ -23,7 +23,7 @@ router.get('/', (req, res) => {
 
 //GET BY ID
 //////////////////////////////////////////////////////////////
-router.get('/:id', (req, res) => {
+router.get('/:id', validatePostId(id), (req, res) => {
   // do your magic!
   PostInfo.getById(req.params.id)
   .then(post => {
@@ -87,6 +87,13 @@ router.put('/:id', (req, res) => {
 
 function validatePostId(req, res, next) {
   // do your magic!
+
+  if (req.body[req.params.id]) {
+    next();
+  } else {
+    res.status(400).json({ errorMessage: `required ${req.params.id}` });
+  }
+
 }
 
 module.exports = router;
