@@ -14,7 +14,6 @@ router.get('/', (req, res) => {
     res.status(200).json(post);
   })
   .catch(error => {
-    // log error to database
     console.log(error);
     res.status(500).json({
       message: 'Error retrieving the posts',
@@ -35,7 +34,6 @@ router.get('/:id', (req, res) => {
     }
   })
   .catch(error => {
-    // log error to database
     console.log(error);
     res.status(500).json({
       message: 'Error retrieving the post',
@@ -56,7 +54,6 @@ router.delete('/:id', (req, res) => {
       }
     })
     .catch(error => {
-      // log error to database
       console.log(error);
       res.status(500).json({
         message: 'Error deleting the post',
@@ -79,7 +76,6 @@ router.put('/:id', (req, res) => {
     }
   })
   .catch(error => {
-    // log error to database
     console.log(error);
     res.status(500).json({
       message: 'Error updating the post',
