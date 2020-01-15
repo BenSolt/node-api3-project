@@ -9,12 +9,12 @@ const UserInfo = require('./users/userDb');
 
 router.post('/', (req, res) => {
   // do your magic!
-  UserInfo.g()
+  UserInfo.insert()
 });
 
 router.post('/:id/posts', (req, res) => {
   // do your magic!
-  UserInfo.g()
+  UserInfo.insert()
 });
 
 router.get('/', (req, res) => {
