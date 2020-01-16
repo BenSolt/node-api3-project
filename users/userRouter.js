@@ -62,7 +62,7 @@ router.get('/', (req, res) => {
 
 //GET USER by ID
 /////////////////////////////////////////////////////////
-router.get('/:id', (req, res) => {
+router.get('/:id', validateUserId, (req, res) => {
   // do your magic!
   const id = req.params.id
   UserInfo.getById(id)
@@ -146,7 +146,8 @@ router.put('/:id', (req, res) => {
 function validateUserId(req, res, next) {
   // do your magic!
   return function(req, res, next) {
-    //req.params.id ===
+    //if (req.params.id === id){
+  //   (req.user) }
     if (req.user) {
       res.status(200)
     }else if(!req.user){
