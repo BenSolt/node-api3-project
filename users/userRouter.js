@@ -9,7 +9,7 @@ const UserInfo = require('../users/userDb');
 
 //POST(ADD) USER - validateUser
 ////////////////////////////////////////////////////////////////
-router.post('/', validateUser, (req, res) => {
+router.post('/',validateUser, (req, res) => {
   // do your magic!
   UserInfo.insert(req.body)
     .then(post => {
@@ -24,9 +24,9 @@ router.post('/', validateUser, (req, res) => {
 });
 
 
-//POST(ADD) USER POST -validateUserId
+//POST(ADD) USER POST -validateUserId validatePost
 /////////////////////////////////////////////////////////////////////////
-router.post('/:id/posts', validateUserId, (req, res) => {
+router.post('/:id/posts', validatePost,(req, res) => {
   if (!req.params.id){
     res.status(400).json({
     message: "The Users post with the specified ID does not exist."})
@@ -39,14 +39,14 @@ router.post('/:id/posts', validateUserId, (req, res) => {
   .catch(error => {
     console.log(error);
     res.status(500).json({
-      message: 'Error adding the User!',
+      message: 'Error adding the User Post!',
     });
   });
 });
 
 //GET USERS
 //////////////////////////////////////////////////////////////////////////
-router.get('/', (req, res) => {
+router.get('/',validateUser, (req, res) => {
   // do your magic!
   UserInfo.get(req.query)
   .then(user => {
@@ -62,7 +62,7 @@ router.get('/', (req, res) => {
 
 //GET USER by ID
 /////////////////////////////////////////////////////////
-router.get('/:id', (req, res) => {
+router.get('/:id',validateUserId, (req, res) => {
   // do your magic!
   const id = req.params.id
   UserInfo.getById(id)
@@ -165,7 +165,7 @@ function validateUserId(req, res, next) {
 
 function validateUser(req, res, next) {
   // do your magic!
-  if (!req.body) {
+  if (!req.user) {
     res.status(400).json({ errorMessage: 'missing user data'});
   }else if(!req.body.name){ 
     res.status(400).json({ message: "missing required name field" })
