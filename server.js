@@ -7,7 +7,21 @@ server.get('/', (req, res) => {
 });
 
 //custom middleware
+///////////////////////////////////////////////////////
+server.use(validateUser);
+server.use(validateUserId);
+server.use(validatePost);
+server.use(validatePostId);
 
-function logger(req, res, next) {}
+server.use(logger)
+
+////////////////////////////////////////////////////
+
+function logger(req,res, next) {
+  const {method, originalURL} = req;
+  console.log(`${method} to ${originalURL}`);
+
+  next();
+}
 
 module.exports = server;
