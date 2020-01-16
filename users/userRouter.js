@@ -4,12 +4,12 @@ const router = express.Router();
 
 ////////////////////////////////////////////////
 
-const UserInfo = require('./users/userDb');
+const UserInfo = require('../users/userDb');
 
 
 //POST(ADD) USER - validateUser
 ////////////////////////////////////////////////////////////////
-router.post('/', validateUser('name'), (req, res) => {
+router.post('/', validateUser, (req, res) => {
   // do your magic!
   UserInfo.insert(req.body)
     .then(post => {
@@ -62,7 +62,7 @@ router.get('/', (req, res) => {
 
 //GET USER by ID
 /////////////////////////////////////////////////////////
-router.get('/:id', validateUserId, (req, res) => {
+router.get('/:id', (req, res) => {
   // do your magic!
   const id = req.params.id
   UserInfo.getById(id)
@@ -82,7 +82,7 @@ router.get('/:id', validateUserId, (req, res) => {
 router.get('/:id/posts', validatePost, (req, res) => {
   // do your magic!
   const id = req.params.id
-  UserInfo.getById(id)
+  UserInfo.getUserPosts(id)
   .then(user => {
     res.status(200).json(user);
   })
@@ -117,7 +117,7 @@ router.delete('/:id', (req, res) => {
 
 //PUT (UPDATE/EDIT) USER
 //////////////////////////////////////////////////////////////////////
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUserId, (req, res) => {
   // do your magic!
   UserInfo.update()
   const id = req.params.id
@@ -143,6 +143,7 @@ router.put('/:id', (req, res) => {
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 // NOT SURE ABOUT THIS ONE!!!!
+
 function validateUserId(req, res, next) {
   // do your magic!
   return function(req, res, next) {
@@ -157,7 +158,7 @@ function validateUserId(req, res, next) {
       next();
     }
   };
-
+}
 
 ////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -173,6 +174,7 @@ function validateUser(req, res, next) {
   }
 
 }
+
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 

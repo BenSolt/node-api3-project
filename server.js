@@ -1,5 +1,10 @@
 const express = require('express');
 
+const validateUser = require('./users/userRouter');
+const validateUserId = require('./users/userRouter');
+const validatePost = require('./users/userRouter');
+const validatePostId = require('./posts/postRouter');
+
 const server = express();
 
 server.get('/', (req, res) => {
