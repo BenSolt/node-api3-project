@@ -146,12 +146,14 @@ router.put('/:id', (req, res) => {
 function validateUserId(req, res, next) {
   // do your magic!
   return function(req, res, next) {
-
+    //req.params.id ===
     if (req.user) {
       res.status(200)
-    }else
+    }else if(!req.user){
       //res.status(400).json({ errorMessage: `required ${req.params.id}` });
       res.status(400).json({ message: "invalid user id" })
+    }else{
+      next();
     }
   };
 
