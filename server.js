@@ -13,8 +13,15 @@ server.use(validateUserId);
 server.use(validatePost);
 server.use(validatePostId);
 
+server.use(logger)
+
 ////////////////////////////////////////////////////
 
-function logger(req, res, next) {}
+function logger(req,res, next) {
+  const {method, originalURL} = req;
+  console.log(`${method} to ${originalURL}`);
+
+  next();
+}
 
 module.exports = server;

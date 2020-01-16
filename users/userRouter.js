@@ -26,7 +26,7 @@ router.post('/', validateUser('name'), (req, res) => {
 
 //POST(ADD) USER POST -validateUserId
 /////////////////////////////////////////////////////////////////////////
-router.post('/:id/posts', validateUserId(id), (req, res) => {
+router.post('/:id/posts', validateUserId, (req, res) => {
   if (!req.params.id){
     res.status(400).json({
     message: "The Users post with the specified ID does not exist."})
@@ -142,34 +142,32 @@ router.put('/:id', (req, res) => {
 ////////////////////CUSTOM MIDDLEWARE////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-
+// NOT SURE ABOUT THIS ONE!!!!
 function validateUserId(req, res, next) {
   // do your magic!
   return function(req, res, next) {
 
-    if (req.body[req.params.id]) {
-      next();
-    } else {
-      res.status(400).json({ errorMessage: `required ${req.params.id}` });
+    if (req.user) {
+      res.status(200)
+    }else
+      //res.status(400).json({ errorMessage: `required ${req.params.id}` });
+      res.status(400).json({ message: "invalid user id" })
     }
   };
-  // if (!req.params.id){
-  //   res.status(400).json({
-  //   message: "The post with the specified ID does not exist."})
-  // }
-}
+
+
 ////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 function validateUser(req, res, next) {
   // do your magic!
-  return function(req, res, next) {
-    if (req.body[prop]) {
-      next();
-    } else {
-      res.status(400).json({ errorMessage: `required ${prop}` });
-    }
-  };
+  if (!req.body) {
+    res.status(400).json({ errorMessage: 'missing user data'});
+  }else if(!req.body.name){ 
+    res.status(400).json({ message: "missing required name field" })
+  } else {
+    next();
+  }
 
 }
 //////////////////////////////////////////////////////////////////////
@@ -177,9 +175,12 @@ function validateUser(req, res, next) {
 
 function validatePost(req, res, next) {
   // do your magic!
-  if (!req.params.id){
-    res.status(400).json({
-    message: "The Users post with the specified ID does not exist."})
+  if (!req.body) {
+    res.status(400).json({ errorMessage: 'missing post data'});
+  }else if(!req.body.text){ 
+    res.status(400).json({ message: "missing required text field" })
+  } else {
+    next();
   }
 }
 
