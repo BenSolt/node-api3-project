@@ -23,7 +23,8 @@ router.get('/', (req, res) => {
 
 //GET BY ID
 //////////////////////////////////////////////////////////////
-router.get('/:id', validatePostId, (req, res) => {
+//, validatePostId
+router.get('/:id',validatePostId, (req, res) => {
   // do your magic!
   PostInfo.getById(req.params.id)
   .then(post => {
@@ -43,7 +44,7 @@ router.get('/:id', validatePostId, (req, res) => {
 
 //DELETE
 //////////////////////////////////////////////////////////////
-router.delete('/:id', (req, res) => {
+router.delete('/:id',validatePostId, (req, res) => {
   // do your magic!
   PostInfo.remove(req.params.id)
     .then(count => {
@@ -63,7 +64,8 @@ router.delete('/:id', (req, res) => {
 
 //PUT (EDIT/UPDATE)
 /////////////////////////////////////////////////////////////
-router.put('/:id', (req, res) => {
+//  
+router.put('/:id',validatePostId, (req, res) => {
   // do your magic!
   const id = req.params.id
   const changes = req.body;
@@ -89,7 +91,7 @@ function validatePostId(req, res, next) {
   // do your magic!
 
   if (!req.body) {
-    res.status(400).json({ errorMessage: 'missing post data'});
+    res.status(400).json({ errorMessage: 'missing post data id'});
   }else if(!req.body.text){ 
     res.status(400).json({ message: "missing required text field" })
   } else {

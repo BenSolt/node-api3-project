@@ -7,7 +7,7 @@ const router = express.Router();
 const UserInfo = require('../users/userDb');
 
 
-//POST(ADD) USER - validateUser
+//POST(ADD) USER validateUser
 ////////////////////////////////////////////////////////////////
 router.post('/',validateUser, (req, res) => {
   // do your magic!
@@ -16,7 +16,7 @@ router.post('/',validateUser, (req, res) => {
       res.status(201).json(post);
     })
     .catch(error => {
-      console.log(error);
+      console.log(error, req.body);
       res.status(500).json({
         message: 'Error adding the User!',
       });
@@ -24,9 +24,9 @@ router.post('/',validateUser, (req, res) => {
 });
 
 
-//POST(ADD) USER POST -validateUserId validatePost
+//POST(ADD) USER POST 
 /////////////////////////////////////////////////////////////////////////
-router.post('/:id/posts', validatePost,(req, res) => {
+router.post('/:id/posts',validateUserId, validatePost,(req, res) => {
   if (!req.params.id){
     res.status(400).json({
     message: "The Users post with the specified ID does not exist."})
@@ -46,7 +46,7 @@ router.post('/:id/posts', validatePost,(req, res) => {
 
 //GET USERS
 //////////////////////////////////////////////////////////////////////////
-router.get('/',validateUser, (req, res) => {
+router.get('/',(req, res) => {
   // do your magic!
   UserInfo.get(req.query)
   .then(user => {
@@ -62,7 +62,7 @@ router.get('/',validateUser, (req, res) => {
 
 //GET USER by ID
 /////////////////////////////////////////////////////////
-router.get('/:id',validateUserId, (req, res) => {
+router.get('/:id', validateUserId, (req, res) => {
   // do your magic!
   const id = req.params.id
   UserInfo.getById(id)
@@ -77,9 +77,9 @@ router.get('/:id',validateUserId, (req, res) => {
   });
 });
 
-//GET USERS ID by POSTS - validatePost
+//GET USERS ID by POSTS 
 /////////////////////////////////////////////////////////////////////
-router.get('/:id/posts', validatePost, (req, res) => {
+router.get('/:id/posts',validateUserId, (req, res) => {
   // do your magic!
   const id = req.params.id
   UserInfo.getUserPosts(id)
@@ -96,7 +96,7 @@ router.get('/:id/posts', validatePost, (req, res) => {
 
 //DELETE USER
 ///////////////////////////////////////////////////////////////////////
-router.delete('/:id', (req, res) => {
+router.delete('/:id',validateUserId, (req, res) => {
   // do your magic!
   const id = req.params.id
   UserInfo.remove(id)
@@ -104,7 +104,7 @@ router.delete('/:id', (req, res) => {
     if (count > 0) {
       res.status(200).json({ message: 'The user is deleted!' });
     } else {
-      res.status(404).json({ message: 'The User could not be found' });
+      res.status(404).json({ message: 'The User could not be found!' });
     }
   })
   .catch(error => {
@@ -117,9 +117,8 @@ router.delete('/:id', (req, res) => {
 
 //PUT (UPDATE/EDIT) USER
 //////////////////////////////////////////////////////////////////////
-router.put('/:id', validateUserId, (req, res) => {
+router.put('/:id', validateUserId, validateUser, (req, res) => {
   // do your magic!
-  UserInfo.update()
   const id = req.params.id
   const changes = req.body;
   UserInfo.update(id, changes)
@@ -127,13 +126,13 @@ router.put('/:id', validateUserId, (req, res) => {
     if (post) {
       res.status(200).json(post);
     } else {
-      res.status(404).json({ message: 'The User could not be found!' });
+      res.status(404).json({ message: 'The User could not be edited!' });
     }
   })
   .catch(error => {
     console.log(error);
     res.status(500).json({
-      message: 'Error updating the User',
+      message: 'Error updating the User'
     });
   });
 });
@@ -146,18 +145,20 @@ router.put('/:id', validateUserId, (req, res) => {
 
 function validateUserId(req, res, next) {
   // do your magic!
-  return function(req, res, next) {
-    //if (req.params.id === id){
-  //   (req.user) }
-    if (req.user) {
-      res.status(200)
-    }else if(!req.user){
-      //res.status(400).json({ errorMessage: `required ${req.params.id}` });
-      res.status(400).json({ message: "invalid user id" })
-    }else{
+  UserInfo.getById(req.params.id)
+  .then(user => {
+    if (user){
+      req.user = user
       next();
+    }else{(!user)
+      res.status(400).json({ message: "invalid user id" })
+   
     }
-  };
+  })
+    .catch(error => {
+      console.log(error);
+     res.status(500).json({error: 'validating user ID'})
+  });
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -165,7 +166,7 @@ function validateUserId(req, res, next) {
 
 function validateUser(req, res, next) {
   // do your magic!
-  if (!req.user) {
+  if (!req.body) {
     res.status(400).json({ errorMessage: 'missing user data'});
   }else if(!req.body.name){ 
     res.status(400).json({ message: "missing required name field" })
